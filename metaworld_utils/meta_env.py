@@ -8,6 +8,8 @@ from metaworld.envs.mujoco.multitask_env import MultiClassMultiTaskEnv
 from metaworld.core.serializable import Serializable
 import sys
 sys.path.append("../..")
+sys.path.append("..")
+from env.sim_mtenv import NewSimEnv
 from torchrl.env.continuous_wrapper import *
 from torchrl.env.get_env import wrap_continuous_env
 
@@ -164,6 +166,13 @@ def generate_single_mt_env(task_cls, task_args, env_rank, num_tasks,
                            max_obs_dim, env_params, meta_env_params):
 
     env = task_cls(*task_args['args'], **task_args["kwargs"])
+    if task_cls == NewSimEnv:
+        env = wrap_continuous_env(env, **env_params)
+        act_space = env.action_space
+        if isinstance(act_space, gym.spaces.Box):
+            env = NormAct(env)
+        return env
+
     env.discretize_goal_space(env.goal.copy())
     if "sampled_index" in meta_env_params:
         del meta_env_params["sampled_index"]
