@@ -46,6 +46,7 @@ def get_args():
     # q function snapshot
     parser.add_argument("--qf2_snap", type=str,   default=None,
                         help="policy snapshot path", )
+    parser.add_argument("--test", action='store_true', default=False, help="test mode")
 
     args = parser.parse_args()
 
